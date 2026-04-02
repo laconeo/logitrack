@@ -24,7 +24,7 @@ import WarehouseInvoices from "./pages/warehouse/Invoices";
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/logitrack">
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
