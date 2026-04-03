@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { LayoutDashboard, Package, CalendarPlus, FileText, Settings, LogOut, Truck, Wrench, MapPin, Navigation, PackageSearch, Building2 } from "lucide-react";
+import { LayoutDashboard, Package, CalendarPlus, FileText, Settings, LogOut, Truck, Wrench, MapPin, Navigation, PackageSearch, Building2, Users, Calculator, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const MOCK_ROLES = [
@@ -16,18 +16,21 @@ export default function DashboardLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const [activeRole, setActiveRole] = useState(
+    location.pathname.includes("/admin") ? "Administrador del Sistema" :
     location.pathname.includes("/driver") ? "Repartidor / Chofer" : 
     location.pathname.includes("/warehouse") ? "Depósito" : 
     "Cliente Vendedor"
   );
   
   useEffect(() => {
-    if (activeRole === "Cliente Vendedor" && (location.pathname.includes("/driver") || location.pathname.includes("/warehouse"))) {
+    if (activeRole === "Cliente Vendedor" && (location.pathname.includes("/driver") || location.pathname.includes("/warehouse") || location.pathname.includes("/admin"))) {
       navigate("/dashboard");
     } else if (activeRole === "Repartidor / Chofer" && !location.pathname.includes("/driver")) {
       navigate("/dashboard/driver");
     } else if (activeRole === "Depósito" && !location.pathname.includes("/warehouse")) {
       navigate("/dashboard/warehouse");
+    } else if (activeRole === "Administrador del Sistema" && !location.pathname.includes("/admin")) {
+      navigate("/dashboard/admin");
     }
   }, [activeRole, navigate, location.pathname]);
 
@@ -55,7 +58,19 @@ export default function DashboardLayout() {
     { icon: FileText, label: "Facturación", path: "/dashboard/warehouse/invoices" },
   ];
 
+  // Nav items para Administrador
+  const adminNavItems = [
+    { icon: LayoutDashboard, label: "Resumen", path: "/dashboard/admin" },
+    { icon: Truck, label: "Repartidores", path: "/dashboard/admin/drivers" },
+    { icon: Users, label: "Clientes", path: "/dashboard/admin/clients" },
+    { icon: Building2, label: "Depósitos", path: "/dashboard/admin/warehouses" },
+    { icon: PackageSearch, label: "Inventario Global", path: "/dashboard/admin/packages" },
+    { icon: Calculator, label: "Contabilidad", path: "/dashboard/admin/accounting" },
+    { icon: Settings, label: "Ajustes", path: "/dashboard/admin/settings" },
+  ];
+
   const navItems = 
+    activeRole === "Administrador del Sistema" ? adminNavItems :
     activeRole === "Cliente Vendedor" ? sellerNavItems : 
     activeRole === "Repartidor / Chofer" ? driverNavItems : 
     activeRole === "Depósito" ? warehouseNavItems : [];
@@ -66,7 +81,7 @@ export default function DashboardLayout() {
       <aside className="w-64 fixed inset-y-0 left-0 bg-white/70 backdrop-blur-xl border-r border-black/5 hidden md:flex flex-col z-10">
         <div className="p-6 flex items-center gap-3">
           <div className="w-8 h-8 bg-[#0066CC] rounded-xl flex items-center justify-center">
-            {activeRole === "Depósito" ? <Building2 className="w-4 h-4 text-white" /> : <Truck className="w-4 h-4 text-white" />}
+            {activeRole === "Administrador del Sistema" ? <ShieldCheck className="w-4 h-4 text-white" /> : activeRole === "Depósito" ? <Building2 className="w-4 h-4 text-white" /> : <Truck className="w-4 h-4 text-white" />}
           </div>
           <span className="font-semibold text-lg tracking-tight">LogiTrack</span>
         </div>
@@ -159,12 +174,12 @@ export default function DashboardLayout() {
             <div className="flex items-center gap-3">
               <div className="text-sm text-right hidden sm:block">
                 <div className="font-medium text-black truncate max-w-[120px]">
-                  {activeRole === "Cliente Vendedor" ? "TechStore Argentina" : activeRole === "Repartidor / Chofer" ? "Roberto S." : activeRole === "Depósito" ? "Base Central" : "Usuario Mock"}
+                  {activeRole === "Administrador del Sistema" ? "Admin Master" : activeRole === "Cliente Vendedor" ? "TechStore Argentina" : activeRole === "Repartidor / Chofer" ? "Roberto S." : activeRole === "Depósito" ? "Base Central" : "Usuario Mock"}
                 </div>
                 <div className="text-black/50 text-xs font-medium">{activeRole}</div>
               </div>
               <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#0066CC] to-blue-400 text-white flex items-center justify-center font-semibold shadow-sm">
-                {activeRole === "Cliente Vendedor" ? "TS" : activeRole === "Repartidor / Chofer" ? "RS" : activeRole === "Depósito" ? "BC" : "UM"}
+                {activeRole === "Administrador del Sistema" ? "AD" : activeRole === "Cliente Vendedor" ? "TS" : activeRole === "Repartidor / Chofer" ? "RS" : activeRole === "Depósito" ? "BC" : "UM"}
               </div>
             </div>
           </div>
@@ -177,9 +192,9 @@ export default function DashboardLayout() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className={`max-w-5xl mx-auto w-full ${!["Cliente Vendedor", "Repartidor / Chofer", "Depósito"].includes(activeRole) ? "flex-1 flex flex-col justify-center items-center" : ""}`}
+            className={`max-w-5xl mx-auto w-full ${!["Administrador del Sistema", "Cliente Vendedor", "Repartidor / Chofer", "Depósito"].includes(activeRole) ? "flex-1 flex flex-col justify-center items-center" : ""}`}
           >
-            {["Cliente Vendedor", "Repartidor / Chofer", "Depósito"].includes(activeRole) ? (
+            {["Administrador del Sistema", "Cliente Vendedor", "Repartidor / Chofer", "Depósito"].includes(activeRole) ? (
               <Outlet />
             ) : (
               <div className="flex flex-col items-center justify-center text-center max-w-md mx-auto p-12 bg-white rounded-3xl border border-black/5 shadow-sm">

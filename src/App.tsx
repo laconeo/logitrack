@@ -22,6 +22,15 @@ import WarehouseOverview from "./pages/warehouse/Overview";
 import WarehouseInventory from "./pages/warehouse/Inventory";
 import WarehouseInvoices from "./pages/warehouse/Invoices";
 
+import AdminOverview from "./pages/admin/Overview";
+import AdminDrivers from "./pages/admin/Drivers";
+import AdminClients from "./pages/admin/Clients";
+import AdminWarehouses from "./pages/admin/Warehouses";
+import AdminPackages from "./pages/admin/Packages";
+import AdminAccounting from "./pages/admin/Accounting";
+import AdminSettings from "./pages/admin/Settings";
+import AdminPlaceholder from "./pages/admin/Placeholder";
+
 export default function App() {
   return (
     <BrowserRouter basename="/logitrack">
@@ -48,6 +57,16 @@ export default function App() {
           <Route index element={<WarehouseOverview />} />
           <Route path="inventory" element={<WarehouseInventory />} />
           <Route path="invoices" element={<WarehouseInvoices />} />
+        </Route>
+
+        <Route path="/dashboard/admin" element={<DashboardLayout />}>
+          <Route index element={<AdminOverview />} />
+          <Route path="drivers" element={<AdminDrivers />} />
+          <Route path="clients" element={<AdminClients />} />
+          <Route path="warehouses" element={<AdminWarehouses />} />
+          <Route path="packages" element={<AdminPackages />} />
+          <Route path="accounting" element={<AdminAccounting />} />
+          <Route path="settings" element={<AdminSettings />} />
         </Route>
       </Routes>
     </BrowserRouter>
